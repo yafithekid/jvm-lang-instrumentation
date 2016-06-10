@@ -1,0 +1,14 @@
+apply plugin:'java'
+
+dependencies {
+    compile 'javassist:javassist:3.12.1.GA'
+}
+
+jar {
+    manifest {
+        attributes 'Premain-Class' : 'com.github.yafithekid.jvm_lang_instrumentation.agent.Agent'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
