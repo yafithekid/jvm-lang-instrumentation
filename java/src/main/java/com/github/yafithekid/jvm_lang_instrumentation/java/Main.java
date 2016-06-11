@@ -1,3 +1,4 @@
+//Main.java
 package com.github.yafithekid.jvm_lang_instrumentation.java;
 
 public class Main {
