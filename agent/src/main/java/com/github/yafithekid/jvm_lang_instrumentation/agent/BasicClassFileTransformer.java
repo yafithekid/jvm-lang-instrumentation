@@ -26,8 +26,11 @@ public class BasicClassFileTransformer implements ClassFileTransformer {
             try {
                 CtClass ctClass = cp.get(className);
                 CtMethod ctMethod = ctClass.getDeclaredMethod("main");
-                ctMethod.insertBefore("System.out.println(System.currentTimeMillis());");
-                ctMethod.insertAfter("System.out.println(System.currentTimeMillis());");
+                ctMethod.addLocalVariable("__a",CtClass.longType);
+                ctMethod.addLocalVariable("__b",CtClass.longType);
+                ctMethod.insertBefore("__a = (System.currentTimeMillis());");
+                ctMethod.insertAfter("__b = (System.currentTimeMillis());");
+                ctMethod.insertAfter("System.out.println(\"method executed in \"+(__b-__a)+\"ms\");");
                 classfileBuffer = ctClass.toBytecode();
             } catch (NotFoundException | CannotCompileException | IOException e) {
                 e.printStackTrace();
