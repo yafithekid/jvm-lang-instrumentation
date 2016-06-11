@@ -16,6 +16,7 @@ public class BasicClassFileTransformer implements ClassFileTransformer {
         modifiedClasses = new HashSet<>();
         modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/java/Main");
         modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/scala/Main");
+        modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/groovy/Main");
     }
 
     @Override
