@@ -17,6 +17,7 @@ public class BasicClassFileTransformer implements ClassFileTransformer {
         modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/java/Main");
         modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/scala/Main");
         modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/groovy/Main");
+        modifiedClasses.add("com/github/yafithekid/jvm_lang_instrumentation/spring/Application");
     }
 
     @Override
@@ -26,12 +27,21 @@ public class BasicClassFileTransformer implements ClassFileTransformer {
             ClassPool cp = ClassPool.getDefault();
             try {
                 CtClass ctClass = cp.get(className);
-                CtMethod ctMethod = ctClass.getDeclaredMethod("main");
+                CtMethod ctMethod;
+                if (_className.endsWith("Application")){
+                    System.out.println("here");
+                    //its the spring controller, so monitor the hello
+                    ctMethod = ctClass.getDeclaredMethod("hello");
+                } else if (_className.endsWith("DispatcherServlet")) {
+                    ctMethod = ctClass.getDeclaredMethod("doDispatch");
+                } else {
+                    ctMethod = ctClass.getDeclaredMethod("main");
+                }
                 ctMethod.addLocalVariable("__a",CtClass.longType);
                 ctMethod.addLocalVariable("__b",CtClass.longType);
                 ctMethod.insertBefore("__a = (System.currentTimeMillis());");
                 ctMethod.insertAfter("__b = (System.currentTimeMillis());");
-                ctMethod.insertAfter("System.out.println(\"method executed in \"+(__b-__a)+\"ms\");");
+                ctMethod.insertAfter("System.out.println(\""+ctMethod.getName()+" executed in \"+(__b-__a)+\"ms\");");
                 classfileBuffer = ctClass.toBytecode();
             } catch (NotFoundException | CannotCompileException | IOException e) {
                 e.printStackTrace();
